@@ -6,6 +6,7 @@ import ListingsContainer from "./ListingsContainer";
 function App() {
   const [allListings, setAllListings] = useState([]);
   const listingDatabase = "http://localhost:6001/listings";
+  const [filterListings,setFilterListings]=useState("")
   
   useEffect( 
     dataFetcher
@@ -18,8 +19,6 @@ function App() {
         .then(data => setAllListings(data))
     }
 
-
-
   function deleteListing(listing){  
     fetch(listingDatabase + "/"+listing.id, {
       method:"DELETE",
@@ -31,10 +30,23 @@ function App() {
     console.log(listing)
     }
 
+  function searchListing(searchForm){
+    console.log(searchForm)
+    setFilterListings(allListings.filter((listing)=>{
+      if(listing.description.includes(searchForm))
+      {
+        return true
+      }
+    }))
+  }
+
+  const displayedListings = (filterListings !== "") ? filterListings : allListings
+
+
   return (
     <div className="app">
-      <Header />
-      <ListingsContainer deleteListing={deleteListing} allListings={allListings} />
+      <Header searchListing={searchListing}/>
+      <ListingsContainer deleteListing={deleteListing} displayedListings={displayedListings} />
     </div>
   );
 }
